@@ -1,0 +1,15 @@
+{
+  "name": "cli-jeopardy",
+  "version": "1.0.0",
+  "description": "Play the best trivia game in the world while project managers think you look super-productive!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "parse": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cheerio": "^1.0.0-rc.3"
+  }
+}
