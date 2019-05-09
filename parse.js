@@ -19,6 +19,7 @@ function parseEpisodeHtml(episodeId) {
 		// only add the first 6 categories
 		let clues = getClues(gameHtml);
 		jeopardyBoard.clues = getRoundClues(clues);
+		exportToJsonFile(jeopardyBoard, episodeId);
 	});
 }
 
@@ -108,6 +109,20 @@ function getClueValue(index) {
 	const NUMBER_OF_COLUMNS = 6;
 	const clueColumn = Math.floor(index / NUMBER_OF_COLUMNS) + 1;
 	return clueColumn * 100;
+}
+
+function exportToJsonFile(jeopardyBoard, episodeId) {
+	const episodeNumber = episodeId - 7815;
+	const fileName = `./episode-data/season-35/episode-${episodeNumber}.json`;
+	const fileContents = JSON.stringify(jeopardyBoard)
+	fs.writeFile(fileName, fileContents, err => {
+		if (err) {
+			console.error(err);
+			return;
+		}
+		console.log(`${fileName} created!`)
+
+	})
 }
 
 parseEpisodeHtml(7816);
