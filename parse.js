@@ -51,7 +51,8 @@ function getClues(html) {
 
 		clues[i] = {
 			clueText: getClueText($el),
-			correctResponse: getClueCorrectResponse($el)
+			correctResponse: getClueCorrectResponse($el),
+			id: i
 		};
 	});
 	return clues;

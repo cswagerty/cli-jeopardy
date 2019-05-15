@@ -5,6 +5,9 @@ const figlet = require('figlet');
 const boardData = require('./episode-data/season-35/episode-1.json');
 
 const { categories, clues } = boardData;
+let score = 0;
+// a list of answered clue ids to prevent selecting a clue twice
+let answeredClueIds = [];
 
 function beginGame() {
 	const greeting = `${chalk.white('This is...')}\n` + figlet.textSync('JEOPARDY', {
@@ -44,6 +47,9 @@ function handleCategoryPrompt(answer) {
 }
 
 function promptForDollarAmount(clues) {
+	// remove options that have already been answered
+	clues = clues.filter(clue => !answeredClueIds.includes(clue.id));
+
 	const availableAmounts = clues.map(clue => {
 		return {
 			name: `$${clue.value}`,
@@ -84,13 +90,17 @@ function promptQuestion(clue) {
 }
 
 function handleClueResponse(clue, answer) {
-	if (responseIsCorrect(answer.response, clue.correctResponse)) {
-		console.log('Correct!');
+	const { value, id, correctResponse } = clue;
+	if (responseIsCorrect(answer.response, correctResponse)) {
+		handleCorrectResponse(value);
 	} else {
-		console.log('Incorrect :(');
+		handleIncorrectResponse(value);
 	}
 
+	answeredClueIds.push(id);
 	console.log(`Correct response: ${clue.correctResponse}`);
+	console.log(`Score: $${score}`);
+
 	setTimeout(promptCategorySelection, 3000);
 }
 
@@ -99,6 +109,16 @@ function responseIsCorrect(response, correctResponse) {
 	// if they want to guess "e" every time then they are terrible people and I don't care
 	const responsePattern = new RegExp(response, 'i');
 	return responsePattern.test(correctResponse);
+}
+
+function handleCorrectResponse(clueValue) {
+	score += clueValue;
+	console.log('Correct!');
+}
+
+function handleIncorrectResponse(clueValue) {
+	score -= clueValue;
+	console.log('Sorry, incorrect response.');
 }
 
 function handleError(err) {
