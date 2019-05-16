@@ -2,7 +2,7 @@ const chalk = require('chalk');
 const inquirer = require('inquirer');
 const figlet = require('figlet');
 
-const boardData = require('./episode-data/season-35/episode-1.json');
+const boardData = require('./episode-data/season-35/episode-5.json');
 
 const { categories, clues } = boardData;
 let score = 0;
@@ -20,7 +20,14 @@ function beginGame() {
 
 function promptCategorySelection() {
 	// reformat the categories with properties expected by inquirer
-	const categoryInputs = categories.map(category => {
+	const remainingCateogries = getRemainingCategories(categories, clues);
+
+	if (remainingCateogries.length === 0) {
+		handleGameComplete();
+		return;
+	}
+
+	const categoryInputs = remainingCateogries.map(category => {
 		return {
 			name: category.name,
 			value: category.id
@@ -38,6 +45,17 @@ function promptCategorySelection() {
 		.prompt(questions)
 		.then(handleCategoryPrompt)
 		.catch(handleError);
+}
+
+function getRemainingCategories(categories, clues) {
+	// only return categories that have clues remaining
+	// get a list of remaining category ids then filter categories that match those ids
+	clues = clues.filter(clue => !answeredClueIds.includes(clue.id));
+	const remainingCategoryIds = clues.reduce((accClueIds, clue) => {
+		return accClueIds.concat(clue.categoryId);
+	}, []);
+	
+	return categories.filter(category => remainingCategoryIds.includes(category.id));
 }
 
 function handleCategoryPrompt(answer) {
@@ -119,6 +137,21 @@ function handleCorrectResponse(clueValue) {
 function handleIncorrectResponse(clueValue) {
 	score -= clueValue;
 	console.log('Sorry, incorrect response.');
+}
+
+function handleGameComplete() {
+	console.log(`${chalk.white(figlet.textSync('Game over', {
+		horizontalLayout: 'full'
+	}))}\n${chalk.white.bold('Thanks for playing')}`);
+
+	const scoreColor = score >= 0 ? 'green' : 'red';
+
+	const scoreMessage = `${chalk.white.bold('Final score:')}`
+	const displayedScore = `${chalk[scoreColor](figlet.textSync('$' + score, {
+		horizontalLayout: 'full'
+	}))}`;
+	console.log(`${scoreMessage}\n${displayedScore}`);
+	process.exit();
 }
 
 function handleError(err) {

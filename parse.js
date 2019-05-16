@@ -1,5 +1,6 @@
 const cheerio = require('cheerio');
 const fs = require('fs');
+const chalk = require('chalk');
 
 function parseEpisodeHtml(episodeId) {
 	// parse episode's HTML file from J!Archive and reformat into JSON data
@@ -78,6 +79,11 @@ function getClueCorrectResponse($el) {
 
 function getRoundClues(clues) {
 	// create array of clue objects with categoryIds and value amounts
+	if (clues.length !== 60) {
+		const errMessage = `Parse error: only ${clues.length} are available or this day. Please try to parse another episode.`;
+		console.log(chalk.red(errMessage));
+		process.exit();
+	}
 	let roundClues = [ ...clues ];
 	roundClues.splice(30);
 
@@ -126,4 +132,4 @@ function exportToJsonFile(jeopardyBoard, episodeId) {
 	})
 }
 
-parseEpisodeHtml(7816);
+parseEpisodeHtml(7820);
