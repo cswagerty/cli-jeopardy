@@ -2,7 +2,10 @@ const chalk = require('chalk');
 const inquirer = require('inquirer');
 const figlet = require('figlet');
 
-const boardData = require('./episode-data/season-35/episode-5.json');
+// allow user to pass in episode as an argument
+const episodeNumber = process.argv[2] | '1'
+
+const boardData = require(`./episode-data/season-35/episode-${episodeNumber}.json`);
 
 const { categories, clues } = boardData;
 let score = 0;

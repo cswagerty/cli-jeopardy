@@ -62,7 +62,10 @@ function getClues(html) {
 function getClueText($el) {
 	let str = $el.attr('onmouseout');
 	// strip out inline js and escaped single quotes used only on website
-	let question = str.replace(/^.*stuck',\s'/, '').replace(/'\)/, '').replace(/\\/g, '');
+	let question = str.replace(/^.*stuck',\s'/, '')
+		.replace(/'\)/, '')
+		.replace(/\\/g, '')
+		.replace(/\\'/g, "'");
 	// remove html tags
 	return cheerio.load(question).text();
 }
@@ -72,7 +75,9 @@ function getClueCorrectResponse($el) {
 
 
 	// strip out inline js and escaped single quotes used only on website
-	let responseEls = str.replace(/^.*stuck',\s'/, '').replace(/'\)$/, '');
+	let responseEls = str.replace(/^.*stuck',\s'/, '')
+		.replace(/'\)$/, '')
+		.replace(/\\'/g, "\'");
 	const $ = cheerio.load(responseEls)
 	return $('.correct_response').text();
 }
@@ -132,4 +137,6 @@ function exportToJsonFile(jeopardyBoard, episodeId) {
 	})
 }
 
-parseEpisodeHtml(7820);
+// user can pass in an episode id to parse into JSON
+const episodeIdToParse = process.argv[2] | 7816
+parseEpisodeHtml(episodeIdToParse);
