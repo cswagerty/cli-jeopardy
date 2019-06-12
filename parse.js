@@ -84,11 +84,6 @@ function getClueCorrectResponse($el) {
 
 function getRoundClues(clues) {
 	// create array of clue objects with categoryIds and value amounts
-	if (clues.length !== 60) {
-		const errMessage = `Parse error: only ${clues.length} are available or this day. Please try to parse another episode.`;
-		console.log(chalk.red(errMessage));
-		process.exit();
-	}
 	let roundClues = [ ...clues ];
 	roundClues.splice(30);
 
